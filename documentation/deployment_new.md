@@ -44,10 +44,48 @@ http://external_IP_of_a_node:31567/v1/tasks
 }
 
 ```
-If your cluster is 
-
+If your cluster is provided by a Cloud Provider, you may be able to use a LoadBalancer type of service. In the chart set the value:
+```
+service.type="LoadBalancer"
+```
+and consult [K8s documentation](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/) on how to find out the IP of your TESK service.
+#### OpenShift
+The chart handles eexposing TESK API as OpenShift Route. 
+In the chart set the value:
+`clusterType: openshift`
+TESK API should be accessible under (Swagger UI):
+`https://project-name.openshift-host-name`
+and
+`https://project-name.openshift-host-name/v1/tasks`
+should return an empty list of tasks.
+#### Ingress
+Recommened way of exposing any public facing API from K8s cluster such as TESK API is to use Ingress. 
+You need:
+* an **Ingress Controller**. If your cluster does not have one, the TESK Helm chart provides a way to Install one particular controller (the section `deploy_ingress`), but a recommened approach is to install an up-to-date Ingress Controller of your choice independently.
+* a **Hostname** - a DNS entry, where you will expose TESK. TESK can be installed at a subpath as well.
+* an **Ingress Resource**, which will instruct the Controller where to expose TESK. The chart provides an Ingress Resource template. 
+* A **TLS certificate** to serve TESK over https. You can obtain one from a certificate authority or automatically obtain one from [Let's Encrypt](https://letsencrypt.org/). The K8s way to do it is by installing [cert-manager](https://cert-manager.io/) and creating an ACME Issuer.
+The example values for TESK Helm chart to create Ingress Resource with annotations for cert-manager, but not to install the controller:
+```
+host_name: tes.ebi.ac.uk
+ingress:
+    active: true
+    tls_secret_name: tes-ebi-ac-uk-tls
+    tls_letsencrypt:
+       annotations:
+           kubernetes.io/ingress.class: nginx
+           kubernetes.io/tls-acme: "true"
+           cert-manager.io/issuer: letsencrypt-production
+    deploy_ingress:
+        active: false
+```
+List of tasks should be reachable under this URL:
+```
+https://tes.ebi.ac.uk/v1/tasks
+```
 
 ### Storage backends
+Documentation in Progress
 
 #### Shared file system
 #### FTP
