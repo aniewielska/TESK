@@ -115,4 +115,17 @@ and additionally provide your username and password in the `secrets.yaml`, as de
 #### S3
 WiP
 
+### Authentication and Authorisation
+TESK supports OAuth2/OIDC to authorise API requests. Authentication and authorisation are optional and can be turned off completely. When turned on, TESK API expects an OIDC access token in Authorization Bearer header. TESK can be integrated with any standard OIDC provider, but the solution has been designed to support Elixir AAI in the first place and the authorisation part relies on Elixir's group model. For details, please see [Authentication and Authorisation document](https://github.com/EMBL-EBI-TSI/tesk-api/blob/master/auth.md).
+To enable authentication set the following value in the chart:
+```
+auth:
+    mode: auth
+```
+At the moment enabling authentication also enables authorisation. Consult [this document](https://github.com/EMBL-EBI-TSI/tesk-api/blob/master/auth.md) for details of authorisation.  
+The support for authorisation configuration in the chart and its documentation is in progress.
+### Additional configuration
+The Helm chart has been a fairly recent addition to TESK and TESK owes its to its fantastic contributors. There might be more options that are available for configuration in TESK that have not been reflected in the chart, yet. Have a look [here](https://github.com/EMBL-EBI-TSI/tesk-api) for more configuration options. 
+
+
 
